@@ -1,0 +1,32 @@
+FROM node:alpine
+LABEL description="Instant high-performance GraphQL API for your PostgreSQL database https://github.com/graphile/postgraphile"
+WORKDIR /home/coordinategraphql
+# Install PostGraphile and PostGraphile connection filter plugin
+RUN npm install -g postgraphile@4.9.0
+RUN npm install -g @graphile-contrib/pg-simplify-inflector@6.0.0
+RUN npm install -g postgraphile-plugin-connection-filter@2.0.0
+
+# Install custom plugin
+# COPY ./custom-plugin /tmp/custom-plugin
+# RUN cd /tmp/custom-plugin && npm pack
+# RUN npm install -g /tmp/custom-plugin/custom-plugin-0.0.1.tgz
+# RUN rm -rf /tmp/custom-plugin
+ADD ./wait-for-it.sh .
+RUN ls
+RUN chmod 755 wait-for-it.sh
+EXPOSE 4005
+CMD postgraphile \
+      -n 0.0.0.0 \
+      --retry-on-init-fail \
+      --dynamic-json \
+      --no-setof-functions-contain-nulls \
+      --no-ignore-rbac \
+      --no-ignore-indexes \
+      --extended-errors errcode \
+      --append-plugins @graphile-contrib/pg-simplify-inflector,postgraphile-plugin-connection-filter \
+      --enable-query-batching \
+      --disable-query-log  \
+      --legacy-relations omit \
+      --connection $DATABASE_URL \
+      --port $GRAPHQL_PORT \
+      --schema public
