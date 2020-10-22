@@ -158,7 +158,9 @@ module.exports = makeWrapResolversPlugin({
 });
 ```
 
-In each project folder, update the `Dockerfile.prod` so that it looks like the one below.
+# Dockerfile
+
+In each project folder, it has `Dockerfile` and `Dockerfile.prod` so that it looks like the one below.
 
 ```dockerfile
 FROM node:alpine
