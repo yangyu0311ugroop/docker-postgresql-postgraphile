@@ -5,7 +5,7 @@ The following guide describes how to run a network of Docker containers on a loc
 ![Architecture](https://github.com/alexisrolland/docker-postgresql-postgraphile/blob/master/doc/architecture.png)
 
 You need this DevEnv Branch to Work with it
-![DevEnv-GraphQl](https://github.com/ugr00p/UGroopDevEnv/tree/posgraphql)
+[DevEnv-GraphQl](https://github.com/ugr00p/UGroopDevEnv/tree/posgraphql)
 
 # Requirements
 Minimum Requirements: Postgres 11, as it needs custom plugins.
@@ -47,7 +47,7 @@ If you use the PostGraphql DevEnv, you can just simply run `./service_start.sh`,
 
 For Development, it used node:12 as the base, and it will run the command below. <br/>
 It shall give you enough to start your bare minimum feature of your Graphql. <br/>
-More Information you can find ![here](https://www.graphile.org/postgraphile/usage-cli/)
+More Information you can find [here](https://www.graphile.org/postgraphile/usage-cli/)
 
 ```
 START_CMD="postgraphile
@@ -90,65 +90,7 @@ CMD postgraphile \
       --port $GRAPHQL_PORT \
       --schema public
 ```
- 
-# Create PostGraphile Container
-
-## Update Environment Variables
-
-Update the file `.env` to add the `DATABASE_URL` which will be used by PostGraphile to connect to the PostgreSQL database. Note the `DATABASE_URL` follows the syntax `postgres://<user>:<password>@db:5432/<db_name>`.
-
-```
-[...]
-# GRAPHQL
-# Parameters used by graphql container
-DATABASE_URL=postgres://postgres:change_me@db:5432/forum_example
-```
-
-## Create PostGraphile Dockerfile
-
-Create a new folder `graphql` at the root of the repository. It will be used to store the files necessary to create the PostGraphile container. Create a new file `Dockerfile` in the `graphql` folder with the following content. You will notice we include the excellent plugin Connection Filter.
-
-```dockerfile
-FROM node:alpine
-LABEL description="Instant high-performance GraphQL API for your PostgreSQL database https://github.com/graphile/postgraphile"
-
-# Install PostGraphile and PostGraphile connection filter plugin
-RUN npm install -g postgraphile
-RUN npm install -g postgraphile-plugin-connection-filter
-
-EXPOSE 5000
-ENTRYPOINT ["postgraphile", "-n", "0.0.0.0"]
-```
-
-## Update Docker Compose File
-
-Update the file `docker-compose.yml` under the `services` section to include the GraphQL service.
-
-```yml
-version: "3.3"
-services:
-    db: [...]
-
-    graphql:
-        container_name: forum-example-graphql
-        restart: always
-        image: forum-example-graphql
-        build:
-            context: ./graphql
-        env_file:
-            - ./.env
-        depends_on:
-            - db
-        networks:
-            - network
-        ports:
-            - 5433:5433
-        command: ["--connection", "${DATABASE_URL}", "--port", "5433", "--schema", "public", "--append-plugins", "postgraphile-plugin-connection-filter"]
-[...]
-```
-
-At this stage, the repository should look like this.
-
+Folder structure.
 ```
 /
 ├─ EventGraphQl/
@@ -251,63 +193,6 @@ CMD postgraphile \
       --connection $DATABASE_URL \
       --port $GRAPHQL_PORT \
       --schema public
-
-```
-
-In the file `docker-compose.yml` from DevEnv,
-
-```yml
-version: "3.3"
-services:
-     db:
-      build:
-        context: ./projects/db // This will build postgres and install custom plugins.
-      ports:
-        - "5432:5432"
-      environment:
-        POSTGRES_USER: db_admin
-        POSTGRES_PASSWORD: password
-        PGDATA: /var/lib/postgresql/data/volume
-      volumes:
-        - ./projects/db/data:/var/lib/postgresql/data/volume
-        - ./projects/db/initdb.d:/docker-entrypoint-initdb.d
-        - ./projects/logs/db:/var/log/postgresql
-        - ./projects/db/etc/postgresql.conf:/etc/postgresql.conf
-        - ./projects/db/etc/pg_hba.conf:/etc/pg_hba.conf
-     notifygraphql:
-       build:
-         context: ./projects/UGroopGraphql/NotificationGraphQl
-       hostname: NotificationGraphQl
-       environment:
-         - DB_SERVER=db
-         - DB_PORT=5432
-         - DATABASE_URL=postgres://db_admin:password@db:5432/ugroop_notification_service
-         - GRAPHQL_PORT=4005
-       depends_on:
-         - db
-       ports:
-         - 4005:4005
-       volumes:
-         - ./projects/UGroopGraphql/NotificationGraphQl/schema:/home/notifygraphql/schema
-```
-
-At this stage, the repository should look like this.
-
-```
-/
-├─ db/
-|  ├─ init/
-|  |  ├─ 00-database.sql
-|  |  └─ 01-data.sql
-|  └─ Dockerfile
-├─ graphql/
-|  ├─ custom-plugin/
-|  |  ├─ index.js
-|  |  └─ package.json
-|  └─ Dockerfile
-├─ .env
-└─ docker-compose.yml
-```
 
 # Queries Examples
 
