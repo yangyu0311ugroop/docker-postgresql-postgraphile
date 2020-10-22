@@ -195,11 +195,10 @@ CMD postgraphile \
       --connection $DATABASE_URL \
       --port $GRAPHQL_PORT \
       --schema public
+
 ```
 
-# Queries Examples
-
-## Queries
+## Queries Examples
 
 Example of query to get all posts and their author.
 
