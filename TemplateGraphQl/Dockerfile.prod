@@ -14,7 +14,7 @@ RUN npm install -g postgraphile-plugin-connection-filter@2.0.0
 ADD ./wait-for-it.sh .
 RUN ls
 RUN chmod 755 wait-for-it.sh
-EXPOSE 4005
+EXPOSE 4099
 CMD postgraphile \
       -n 0.0.0.0 \
       --retry-on-init-fail \
