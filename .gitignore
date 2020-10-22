@@ -1,0 +1,6 @@
+CoordinateGraphQl/schema/coordinate.schema.graphql
+EventGraphQl/schema/event.schema.graphql
+NotificationGraphQl/schema/template.schema.graphql
+OrgGraphQl/schema/org.schema.graphql
+PersonGraphQl/schema/person.schema.graphql
+TemplateGraphQl/schema/template.schema.graphql
