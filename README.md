@@ -195,6 +195,7 @@ CMD postgraphile \
       --connection $DATABASE_URL \
       --port $GRAPHQL_PORT \
       --schema public
+```
 
 # Queries Examples
 
@@ -221,4 +222,4 @@ query {
 
 ## Mutations
 
-Please do no use Mutation in this project, I have not disabled it.
+Please do no use Mutation in this project.
